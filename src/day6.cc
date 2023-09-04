@@ -27,16 +27,21 @@ int main()
         }
     }
 
-    std::string result1;
+    std::string result1, result2;
 
     for (auto const& f : data) {
         auto it = std::max_element(
             f.cbegin(), f.cend(), [](auto const& lhs, auto const& rhs) { return lhs.second < rhs.second; });
         assert(it != f.cend());
         result1 += it->first;
+        it = std::max_element(
+            f.cbegin(), f.cend(), [](auto const& lhs, auto const& rhs) { return lhs.second > rhs.second; });
+        assert(it != f.cend());
+        result2 += it->first;
     }
 
     fmt::print("1: {}\n", result1);
+    fmt::print("2: {}\n", result2);
 
     return 0;
 }
