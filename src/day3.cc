@@ -40,7 +40,7 @@ int main()
     }
 
     auto count_valid = [](Numbers const& numbers) {
-        unsigned count = 0;
+        unsigned cnt = 0;
         std::multiset<int> values;
         for (auto t : numbers) {
             values.clear();
@@ -52,10 +52,10 @@ int main()
             t[1] = *it++;
             t[2] = *it++;
             if ((t[0] + t[1]) > t[2]) {
-                ++count;
+                ++cnt;
             }
         }
-        return count;
+        return cnt;
     };
 
     col1.insert(col1.end(), col2.cbegin(), col2.cend());
