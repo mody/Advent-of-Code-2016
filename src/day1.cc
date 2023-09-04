@@ -26,11 +26,8 @@ int main()
             ++dir;
         } else if (turn == 'L') {
             --dir;
-            if (dir < 0) {
-                dir += directions.size();
-            }
         }
-        dir = dir % directions.size();
+        dir = (directions.size() + dir) % directions.size();
         for (Coord i = 0; i < steps; ++i) {
             px += directions.at(dir);
 
