@@ -9,6 +9,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(PkgConfig)
 pkg_check_modules(FMT REQUIRED QUIET fmt)
+pkg_check_modules(CRYPTOPP REQUIRED QUIET libcryptopp)
 # pkg_check_modules(PC_RapidJSON QUIET RapidJSON)
 
 #  find_package(TBB REQUIRED tbb)
@@ -34,10 +35,10 @@ add_executable(day4 src/day4.cc)
 target_compile_features(day4 PRIVATE cxx_std_20)
 target_link_libraries(day4 PRIVATE ${FMT_LIBRARIES})
 
-# add_executable(day5 src/day5.cc)
-# target_compile_features(day5 PRIVATE cxx_std_20)
-# target_link_libraries(day5 PRIVATE ${FMT_LIBRARIES})
-# 
+add_executable(day5 src/day5.cc)
+target_compile_features(day5 PRIVATE cxx_std_20)
+target_link_libraries(day5 PRIVATE ${FMT_LIBRARIES} ${CRYPTOPP_LIBRARIES})
+
 # add_executable(day6 src/day6.cc)
 # target_compile_features(day6 PRIVATE cxx_std_20)
 # target_link_libraries(day6 PRIVATE ${FMT_LIBRARIES})
