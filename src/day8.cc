@@ -60,7 +60,7 @@ struct Screen
                 if (data.contains({x, y})) {
                     fmt::print("#");
                 } else {
-                    fmt::print(".");
+                    fmt::print(" ");
                 }
             }
             fmt::print("\n");
@@ -99,7 +99,8 @@ int main()
         }
     }
 
-    fmt::print("1: {}\n", s.size());
+    fmt::print("1: {}\n2:\n", s.size());
+    s.print();
 
     return 0;
 }
