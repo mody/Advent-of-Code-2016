@@ -47,6 +47,7 @@ int main()
     std::getline(std::cin, line);
 
     fmt::print("1: {}\n", process(line, 1, 1));
+    fmt::print("2: {}\n", process(line, 1, std::numeric_limits<unsigned>::max()));
 
     return 0;
 }
