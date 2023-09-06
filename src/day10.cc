@@ -25,6 +25,10 @@ struct Bot {
         }
     }
 
+    void store(Val v) noexcept {
+        low = v;
+    }
+
     std::optional<Val> low, high;
 };
 
@@ -47,6 +51,8 @@ int main()
 {
     static const boost::regex RX_RULE("^bot (\\d+) gives low to ([a-z]+) (\\d+) and high to ([a-z]+) (\\d+)$");
     static const boost::regex RX_INPUT("^value (\\d+) goes to bot (\\d+)$");
+
+    unsigned output1 = 0;
 
     Rules rules;
     Inputs inputs;
@@ -105,9 +111,8 @@ int main()
             Bot& b0 = bots.at(bid);
             assert(b0.low && b0.high);
 
-            if (b0.low == 17 && b0.high == 61) {
-                fmt::print("1: {}\n", bid);
-                return 0;
+            if (!output1 && b0.low == 17 && b0.high == 61) {
+                output1 = bid;
             }
 
             Rule const& rule = rules.at(bid);
@@ -117,10 +122,18 @@ int main()
             Bot& b2 = bots[rule.dst_high];
             assert(!b2.low || !b2.high);
 
-            b1.put(b0.low.value());
+            if (rule.dst_low < OUTPUT_OFFSET) {
+                b1.put(b0.low.value());
+            } else {
+                b1.store(b0.low.value());
+            }
             b0.low.reset();
 
-            b2.put(b0.high.value());
+            if (rule.dst_high < OUTPUT_OFFSET) {
+                b2.put(b0.high.value());
+            } else {
+                b2.store(b0.high.value());
+            }
             b0.high.reset();
 
             if (rule.dst_low < OUTPUT_OFFSET && b1.low && b1.high) work_queue.insert(rule.dst_low);
@@ -128,5 +141,10 @@ int main()
         }
     }
 
+    fmt::print("1: {}\n", output1);
+    fmt::print(
+        "2: {}\n",
+        bots.at(OUTPUT_OFFSET + 0).low.value() * bots.at(OUTPUT_OFFSET + 1).low.value()
+            * bots.at(OUTPUT_OFFSET + 2).low.value());
     return 0;
 }
