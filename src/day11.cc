@@ -2,7 +2,6 @@
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
-#include <boost/container_hash/hash.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
@@ -18,28 +17,31 @@
 #include <string>
 #include <string_view>
 
-// lets use NAND to detect collision
 enum Material
 {
-    Lithium = 0,
-    Hydrogen,
+    // Lithium = 0,
+    // Hydrogen,
     Strontium,
     Plutonium,
     Thulium,
     Ruthenium,
     Curium,
+    Elerium,
+    Dilithium,
     Material_Size,
 };
 using Materials = std::bitset<Material_Size>;
 
 static const std::map<std::string, Material> Str2Mat = {
-    {"hydrogen", Hydrogen},
-    {"lithium", Lithium},
+    // {"hydrogen", Hydrogen},
+    // {"lithium", Lithium},
     {"strontium", Strontium},
     {"plutonium", Plutonium},
     {"thulium", Thulium},
     {"ruthenium", Ruthenium},
     {"curium", Curium},
+    {"elerium", Elerium},
+    {"dilithium", Dilithium},
 };
 
 struct Floor
@@ -116,7 +118,6 @@ struct Floors
             target.data.at(3).microchips |= f.microchips;
         }
         assert(target.data.at(3).generators == target.data.at(3).microchips);
-        target.dump();
         return target;
     }
 
@@ -189,7 +190,7 @@ std::unordered_set<Floor> Floor::move_candidates() const noexcept
     return candidates;
 }
 
-void part1(const Floors starting_floors)
+void do_work(const Floors starting_floors, unsigned part)
 {
     using EdgeWeight = boost::property<boost::edge_weight_t, unsigned>;
     using VertexDistance = boost::property<boost::vertex_distance_t, unsigned>;
@@ -204,22 +205,17 @@ void part1(const Floors starting_floors)
     Graph g;
 
     std::unordered_map<Floors, Vertex> floors2vertex;
-    std::map<Vertex, Floors> vertex2floors;
-    std::unordered_set<Floors> visited;
-
     std::deque<Floors> to_process;
 
     const Vertex start_v = boost::add_vertex(VertexDistance {0}, g);
     to_process.push_back(starting_floors);
     floors2vertex.insert({starting_floors, start_v});
-    vertex2floors.insert({start_v, starting_floors});
 
     const Floors target_floors = starting_floors.target_state();
     const Vertex dst_v = boost::add_vertex(VertexDistance {0}, g);
     floors2vertex.insert({target_floors, dst_v});
-    vertex2floors.insert({dst_v, target_floors});
 
-    fmt::print("starting at {}\n", start_v);
+    // fmt::print("starting at {}\n", start_v);
 
     while(!to_process.empty()) {
         const auto current_floors = to_process.front();
@@ -227,43 +223,38 @@ void part1(const Floors starting_floors)
 
         const Vertex from = floors2vertex.at(current_floors);
 
-        fmt::print("\nstart processing at {}:\n", from);
-        current_floors.dump();
+        // fmt::print("\nstart processing at {}:\n", from);
+        // current_floors.dump();
 
         Floor const& current_floor = current_floors.data.at(current_floors.elevator);
-        fmt::print("candidates: {}\n", current_floor.move_candidates().size());
+        // fmt::print("candidates: {}\n", current_floor.move_candidates().size());
         for (auto const& candidate : current_floor.move_candidates()) {
             assert(candidate.valid());
 
-            auto connect_state = [&floors2vertex, &vertex2floors, &g, &from,
-                                  &to_process](Floors const& new_floors) {
+            auto connect_state = [&floors2vertex, &g, &from, &to_process](Floors const& new_floors) {
                 if (!new_floors.valid()) {
-                    fmt::print("Invalid floors created\n");
-                    new_floors.dump();
+                    // fmt::print("Invalid floors created\n");
+                    // new_floors.dump();
                     return;
                 }
                 auto known = floors2vertex.find(new_floors);
                 if (known == floors2vertex.end()) {
                     Vertex next = boost::add_vertex(VertexDistance {0}, g);
                     boost::add_edge(from, next, EdgeWeight {1}, g);
-                    bool added = floors2vertex.insert({new_floors, next}).second;
-                    vertex2floors.insert({next, new_floors});
-                    if (!added) {
-                        fmt::print("XXX vertex collision!\n");
-                    }
+                    floors2vertex.insert({new_floors, next});
 
-                    fmt::print("new floors from {} to {}:\n", from, next);
-                    new_floors.dump();
+                    // fmt::print("new floors from {} to {}:\n", from, next);
+                    // new_floors.dump();
 
                     to_process.push_back(new_floors);
-                    fmt::print("added at {}\n", next);
+                    // fmt::print("added at {}\n", next);
                 } else {
                     boost::add_edge(from, known->second, EdgeWeight {1}, g);
-                    fmt::print("known candidate\n");
+                    // fmt::print("known candidate\n");
                 }
             };
 
-            fmt::print("candidate: {}\n", candidate.to_string());
+            // fmt::print("candidate: {}\n", candidate.to_string());
             const Floor old_floor = current_floor - candidate;
             if (old_floor.valid() && current_floors.elevator < 3) {
                 Floors new_floors = current_floors;
@@ -271,7 +262,7 @@ void part1(const Floors starting_floors)
 
                 new_floors.elevator += 1;
                 new_floors.data.at(new_floors.elevator) += candidate;
-                fmt::print("Able to move up:\n");
+                // fmt::print("Able to move up:\n");
                 connect_state(new_floors);
             }
             if (old_floor.valid() && current_floors.elevator > 0) {
@@ -280,7 +271,7 @@ void part1(const Floors starting_floors)
 
                 new_floors.elevator -= 1;
                 new_floors.data.at(new_floors.elevator) += candidate;
-                fmt::print("Able to move down\n");
+                // fmt::print("Able to move down\n");
                 connect_state(new_floors);
             }
         }
@@ -288,32 +279,14 @@ void part1(const Floors starting_floors)
 
     fflush(stdout);
 
-    assert(floors2vertex.contains(starting_floors));
-    assert(floors2vertex.contains(target_floors));
-
-
     auto dist_map = boost::get(boost::vertex_distance, g);
     std::vector<Vertex> pred(boost::num_vertices(g));
     boost::dijkstra_shortest_paths(g, start_v, boost::distance_map(dist_map).predecessor_map(&pred[0]));
 
     if (dist_map[dst_v] != (std::numeric_limits<decltype(dist_map)::value_type>::max() - 1)) {
-        std::deque<Vertex> path;
-        {
-            for (Vertex x = dst_v; x != start_v; x = pred[x]) {
-                path.push_front(x);
-            }
-            path.push_front(start_v);
-        }
-
-        fmt::print("\npath:\n");
-        for (auto const& v : path) {
-            fmt::print("{}:\n", v);
-            vertex2floors.at(v).dump();
-        }
-
-        fmt::print("\n1: {}\n", dist_map[dst_v]);
+        fmt::print("{}: {}\n", part, dist_map[dst_v]);
     } else {
-        fmt::print("\n1: PATH NOT FOUND\n");
+        fmt::print("{}: PATH NOT FOUND\n", part);
     }
 
     fflush(stdout);
@@ -383,7 +356,14 @@ int main()
         }
     }
 
-    part1(floors);
+    do_work(floors, 1);
+
+    floors.at(0).generators.set(Elerium);
+    floors.at(0).microchips.set(Elerium);
+    floors.at(0).generators.set(Dilithium);
+    floors.at(0).microchips.set(Dilithium);
+
+    do_work(floors, 2);
 
     return 0;
 }
