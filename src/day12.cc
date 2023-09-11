@@ -180,8 +180,13 @@ int main()
 
     CPU cpu1(prog);
     cpu1.run();
-
     fmt::print("1: {}\n", cpu1.registers.at(static_cast<unsigned>(Register::A)));
+
+    CPU cpu2(prog);
+    cpu2.registers.at(static_cast<unsigned>(Register::C)) = 1;
+    cpu2.run();
+
+    fmt::print("2: {}\n", cpu2.registers.at(static_cast<unsigned>(Register::A)));
 
     return 0;
 }
