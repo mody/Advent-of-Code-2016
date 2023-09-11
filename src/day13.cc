@@ -3,7 +3,7 @@
 #include <bitset>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/detail/adjacency_list.hpp>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/dijkstra_shortest_paths_no_color_map.hpp>
 
 #include <boost/graph/graph_selectors.hpp>
 #include <fmt/core.h>
@@ -49,7 +49,7 @@ struct World
         }
     }
 
-    void part1(const Coord dst_x, const Coord dst_y) const
+    void do_work(const Coord dst_x, const Coord dst_y) const
     {
         using EdgeWeight = boost::property<boost::edge_weight_t, unsigned>;
         using VertexDistance = boost::property<boost::vertex_distance_t, unsigned>;
@@ -83,13 +83,16 @@ struct World
 
         auto dist_map = boost::get(boost::vertex_distance, g);
         std::vector<Vertex> pred(boost::num_vertices(g));
-        boost::dijkstra_shortest_paths(g, start_v, boost::distance_map(dist_map).predecessor_map(&pred[0]));
+        boost::dijkstra_shortest_paths_no_color_map(g, start_v, boost::distance_map(dist_map).predecessor_map(&pred[0]));
+        fmt::print("1: {}\n", dist_map[dst_v]);
 
-        if (dist_map[dst_v] != (std::numeric_limits<decltype(dist_map)::value_type>::max() - 1)) {
-            fmt::print("1: {}\n", dist_map[dst_v]);
-        } else {
-            fmt::print("1: PATH NOT FOUND\n");
+        unsigned cnt = 0;
+        for (auto const& [_,v] : point2vertex) {
+            if (dist_map[v] < 51) {
+                ++cnt;
+            }
         }
+        fmt::print("2: {}\n", cnt);
     }
 
     std::unordered_set<Point> data;
@@ -99,7 +102,7 @@ struct World
 int main()
 {
     World w(1352, 100, 100);
-    w.part1(31, 39);
+    w.do_work(31, 39);
 
     return 0;
 }
