@@ -54,14 +54,13 @@ unsigned process(unsigned stretch)
                     md5.Update((const byte*)&msg[0], msg.size());
                     md5.Final((byte*)&decoded[0]);
 
-                    CryptoPP::HexEncoder encoder(nullptr, false);
-                    encoder.Put((byte*)decoded.data(), decoded.size());
-                    encoder.MessageEnd();
-
-                    const auto size = encoder.MaxRetrievable();
-                    if (size) {
-                        msg.resize(size);
-                        encoder.Get((byte*)&msg[0], msg.size());
+                    msg.resize(md5.DigestSize() * 2);
+                    unsigned idx = 0;
+                    for (auto const& c : decoded) {
+                        static const std::array<unsigned char, 16> to_char = {'0', '1', '2', '3', '4', '5', '6', '7',
+                                                                              '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+                        msg.at(idx++) = to_char.at((c & 0xf0) >> 4);
+                        msg.at(idx++) = to_char.at(c & 0x0f);
                     }
                 }
 
