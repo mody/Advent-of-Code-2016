@@ -10,10 +10,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(PkgConfig)
 pkg_check_modules(FMT REQUIRED QUIET fmt)
 pkg_check_modules(CRYPTOPP REQUIRED QUIET libcryptopp)
+pkg_check_modules(TBB REQUIRED QUIET tbb)
 # pkg_check_modules(PC_RapidJSON QUIET RapidJSON)
-
-#  find_package(TBB REQUIRED tbb)
-#  pkg_check_modules(TBB REQUIRED QUIET tbb)
 
 # set(BOOST_ROOT "/home/ov699/opt/")
 #  find_package(Boost 1.67.0 COMPONENTS unit_test_framework REQUIRED)
@@ -73,7 +71,7 @@ target_link_libraries(day13 PRIVATE ${FMT_LIBRARIES})
 
 add_executable(day14 src/day14.cc)
 target_compile_features(day14 PRIVATE cxx_std_20)
-target_link_libraries(day14 PRIVATE ${FMT_LIBRARIES} ${CRYPTOPP_LIBRARIES})
+target_link_libraries(day14 PRIVATE ${FMT_LIBRARIES} ${CRYPTOPP_LIBRARIES} ${TBB_LIBRARIES})
 
 # add_executable(day15 src/day15.cc)
 # target_compile_features(day15 PRIVATE cxx_std_20)
