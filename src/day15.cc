@@ -16,21 +16,26 @@ struct Wheel
 using Wheels = std::vector<Wheel>;
 
 
-unsigned find_time(Wheels wheels)
+unsigned find_time(Wheels const& wheels)
 {
     const unsigned max_time = std::accumulate(
         wheels.cbegin(), wheels.cend(), 1, [](unsigned const& a, Wheel const& w2) { return a * w2.positions; });
 
-    for(unsigned t = 0; t < max_time; ++t) {
-        std::vector<unsigned> positions(wheels.size(), 0u);
+    bool all_zeros = false;
+    for(unsigned t = 0; !all_zeros && t < max_time; ++t) {
+        all_zeros = true;
         for (unsigned i = 0; i < wheels.size(); ++i) {
-            positions.at(i) = (wheels.at(i).offset + t + i + 1) % wheels.at(i).positions;
+            if(((wheels.at(i).offset + t + i + 1) % wheels.at(i).positions) > 0) {
+                all_zeros = false;
+                break;
+            }
         }
 
-        if (std::all_of(positions.cbegin(), positions.cend(), [](unsigned const& v) { return v == 0; })) {
+        if (all_zeros) {
             return t;
         }
     }
+
     return 0;
 }
 
