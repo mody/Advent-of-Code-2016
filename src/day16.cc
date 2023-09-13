@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <fmt/core.h>
 
-void part1(unsigned const disk_size, std::string data)
+void process(unsigned const disk_size, std::string data)
 {
     while(data.size() < disk_size) {
         std::string b = data;
@@ -25,8 +25,8 @@ void part1(unsigned const disk_size, std::string data)
 
 int main()
 {
-    // part1(20, "10000");
-    part1(272, "11110010111001001");
+    process(272, "11110010111001001");
+    process(35651584, "11110010111001001");
 
     return 0;
 }
