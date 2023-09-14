@@ -144,12 +144,14 @@ struct std::hash<State>
 };
 
 
-std::string process()
+std::string process(bool shortest)
 {
     std::deque<State> work_queue;
     std::unordered_set<State> seen;
 
     work_queue.push_back({});
+
+    std::string result;
 
     while(!work_queue.empty())
     {
@@ -165,7 +167,16 @@ std::string process()
                 next_state.move_me(dir);
 
                 if (next_state.px == Point{3,3}) {
-                    return next_state.moves;
+                    if (shortest) {
+                        result = next_state.moves;
+                        work_queue.clear();
+                        break;
+                    } else {
+                        if (result.size() < next_state.moves.size()) {
+                            result = next_state.moves;
+                        }
+                        continue;
+                    }
                 }
 
                 auto it = seen.find(next_state);
@@ -178,18 +189,19 @@ std::string process()
             }
         }
     }
-    return {};
+    return result;
 }
 
-// const std::string State::SEED = "hijkl";
 // const std::string State::SEED = "ihgpwlah";
 // const std::string State::SEED = "kglvqrro";
 // const std::string State::SEED = "ulqzkmiv";
+
 const std::string State::SEED = "vkjiggvb";
 
 int main()
 {
-    fmt::print("1: {}\n", process());
+    fmt::print("1: {}\n", process(true));
+    fmt::print("2: {}\n", process(false).size());
 
     return 0;
 }
