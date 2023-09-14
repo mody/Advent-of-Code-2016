@@ -85,9 +85,9 @@ struct hash<Gfx_3d::Point<Coord>>
     size_t operator()(Gfx_3d::Point<Coord> const& p) const noexcept
     {
         size_t seed = 0;
-        boost::hash_combine(seed, p.x);
-        boost::hash_combine(seed, p.y);
-        boost::hash_combine(seed, p.z);
+        boost::hash_combine(seed, std::hash<Coord>{}(p.x));
+        boost::hash_combine(seed, std::hash<Coord>{}(p.y));
+        boost::hash_combine(seed, std::hash<Coord>{}(p.z));
         return seed;
     }
 };

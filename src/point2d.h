@@ -1,9 +1,10 @@
+#include <bitset>
 #include <boost/container_hash/hash.hpp>
 #include <cstdint>
+#include <functional>
 #include <tuple>
 
 namespace Gfx_2d {
-
 
 struct Direction
 {
@@ -106,8 +107,8 @@ struct hash<Gfx_2d::Point<Coord>>
     size_t operator()(Gfx_2d::Point<Coord> const& p) const noexcept
     {
         size_t seed = 0;
-        boost::hash_combine(seed, p.x);
-        boost::hash_combine(seed, p.y);
+        boost::hash_combine(seed, std::hash<Coord>{}(p.x));
+        boost::hash_combine(seed, std::hash<Coord>{}(p.y));
         return seed;
     }
 };
