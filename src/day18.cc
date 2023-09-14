@@ -32,16 +32,20 @@ int main()
         return result;
     };
 
-    // fmt::print("{}\n", std::string_view(&line[1], line.size() - 2));
+    unsigned result1 = 0;
     unsigned count = count_traps(line);
 
-    for (unsigned i = 0; i < 39; ++i) {
+    for (unsigned i = 1; i < 400000; ++i) {
         line = next_line(line);
         count += count_traps(line);
-        // fmt::print("{}\n", std::string_view(&line[1], line.size() - 2));
+
+        if (i == 39) {
+            result1 = count;
+        }
     }
 
-    fmt::print("1: {}\n", count);
+    fmt::print("1: {}\n", result1);
+    fmt::print("2: {}\n", count);
 
     return 0;
 }
