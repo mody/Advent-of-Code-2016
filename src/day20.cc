@@ -26,7 +26,7 @@ struct Item
 
 using Data = std::list<Item>;
 
-void part1(Data const& input, Data data)
+void process(Data const& input, Data data)
 {
     for (auto const& cur : input) {
         auto first = std::find_if(data.begin(), data.end(), [&](auto const& d) { return d.to >= cur.from; });
@@ -48,13 +48,14 @@ void part1(Data const& input, Data data)
         }
     }
 
-    // fmt::print("Data: ");
-    // for (auto const& d : data) {
-    //     fmt::print("[{}],", d.to_string());
-    // }
-    // fmt::print("\n");
-
     fmt::print("1: {}\n", data.front().from);
+
+    uint64_t sum = 0;
+    for (auto const& item : data) {
+        sum += item.to - item.from + 1;
+    }
+
+    fmt::print("2: {}\n", sum);
 }
 
 int main()
@@ -70,12 +71,11 @@ int main()
         i.from = std::stoull(&line[0], &pos);
         ++pos;
         i.to = std::stoull(&line[pos], &pos);
-        // fmt::print("{}-{}\n", i.from, i.to);
         data.push_back(std::move(i));
     }
 
-    // part1(data, {{0, 9}});
-    part1(data, {{0, 4294967295}});
+    // process(data, {{0, 9}});
+    process(data, {{0, 4294967295}});
 
     return 0;
 }
