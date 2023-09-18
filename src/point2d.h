@@ -1,8 +1,7 @@
-#include <bitset>
 #include <boost/container_hash/hash.hpp>
+#include <cmath>
 #include <cstdint>
-#include <functional>
-#include <tuple>
+#include <type_traits>
 
 namespace Gfx_2d {
 
@@ -94,7 +93,11 @@ struct Point
 
     constexpr bool operator<(Point const& o) const noexcept { return std::tie(x, y) < std::tie(o.x, o.y); }
 
-    constexpr Coord manhattan_dist(Point const& o) const noexcept { return std::abs(x - o.x) + std::abs(y - o.y); }
+    constexpr Coord manhattan_dist(Point const& o) const noexcept
+    {
+        return std::abs(std::make_signed_t<Coord>(x) - std::make_signed_t<Coord>(o.x))
+            + std::abs(std::make_signed_t<Coord>(y) - std::make_signed_t<Coord>(o.y));
+    }
 };
 
 }  // namespace Gfx_2d

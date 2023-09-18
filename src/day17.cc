@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <array>
+#include <bitset>
 #include <cassert>
 #include <deque>
 #include <string_view>
