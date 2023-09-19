@@ -49,7 +49,7 @@ using Doors = std::unordered_map<Point, unsigned>;
     fmt::print("{}\n", std::string(max_x + 1, '#'));
 }
 
-void part1(World const& world, Doors const& doors, Graph g)
+void process(World const& world, Doors const& doors, Graph g)
 {
     std::map<unsigned char, std::map<unsigned char, unsigned>> distances;
 
@@ -67,17 +67,10 @@ void part1(World const& world, Doors const& doors, Graph g)
         }
     }
 
-    // for (auto const& [from, dst] : distances) {
-    //     for (auto const& [to, length] : dst) {
-    //         fmt::print("{:c} -> {:c} = {}\n", from, to, length);
-    //     }
-    //     fmt::print("\n");
-    // }
-
     std::sort(sequence.begin(), sequence.end());
     sequence.erase(sequence.begin()); // remove '0'; we always start at '0'
 
-    unsigned minimum = -1;
+    unsigned minimum1 = -1, minimum2 = -1;
     do {
         unsigned path = 0;
         unsigned char last = '0';
@@ -85,11 +78,14 @@ void part1(World const& world, Doors const& doors, Graph g)
             path += distances.at(last).at(d);
             last = d;
         }
-        // fmt::print("path 0{} -> {}\n", sequence, path);
-        minimum = std::min(minimum, path);
+        minimum1 = std::min(minimum1, path);
+
+        path += distances.at(last).at('0');
+        minimum2 = std::min(minimum2, path);
     } while(std::next_permutation(sequence.begin(), sequence.end()));
 
-    fmt::print("1: {}\n", minimum);
+    fmt::print("1: {}\n", minimum1);
+    fmt::print("2: {}\n", minimum2);
 }
 
 int main()
@@ -129,7 +125,7 @@ int main()
         }
     }
 
-    part1(world, doors, g);
+    process(world, doors, g);
 
     return 0;
 }
