@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.11)
 project(AOC2016)
 
-#  set(CMAKE_CXX_FLAGS "-Wall -Werror -Wshadow -std=c++20 -fno-omit-frame-pointer -ggdb3 -O3")
 #  set(CMAKE_CXX_FLAGS "-Wall -Werror -Wshadow -std=c++20 -fno-omit-frame-pointer -ggdb3 -O0")
+#  set(CMAKE_CXX_FLAGS "-Wall -Werror -Wshadow -std=c++20 -fno-omit-frame-pointer -ggdb3 -O0 -fsanitize=address")
 set(CMAKE_CXX_FLAGS "-Wall -Werror -Wshadow  -std=c++20 -fno-omit-frame-pointer -ggdb3 -O3 -fsanitize=address")
 #  set(CMAKE_CXX_FLAGS "-Wall -Werror -Wshadow  -std=c++20 -fno-omit-frame-pointer -ggdb3 -O3 -fsanitize=memory -fsanitize-memory-track-origins")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -105,10 +105,10 @@ add_executable(day22 src/day22.cc)
 target_compile_features(day22 PRIVATE cxx_std_20)
 target_link_libraries(day22 PRIVATE ${FMT_LIBRARIES})
 
-# add_executable(day23 src/day23.cc)
-# target_compile_features(day23 PRIVATE cxx_std_20)
-# target_link_libraries(day23 PRIVATE ${FMT_LIBRARIES})
-# 
+add_executable(day23 src/day23.cc)
+target_compile_features(day23 PRIVATE cxx_std_20)
+target_link_libraries(day23 PRIVATE ${FMT_LIBRARIES})
+
 # add_executable(day24 src/day24.cc)
 # target_compile_features(day24 PRIVATE cxx_std_20)
 # target_link_libraries(day24 PRIVATE ${FMT_LIBRARIES})
