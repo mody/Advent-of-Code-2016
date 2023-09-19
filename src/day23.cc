@@ -49,7 +49,7 @@ struct CPU
 
     constexpr bool has_value(Argument const& arg) const noexcept { return arg.index() > 0; }
 
-    int64_t& get_value(Argument const& arg) {
+    constexpr int64_t& get_value(Argument const& arg) noexcept {
         return std::visit(
             [this](auto&& _arg) -> int64_t& {
                 using T = std::decay_t<decltype(_arg)>;
@@ -205,10 +205,10 @@ int main()
     cpu1.run();
     fmt::print("1: {}\n", cpu1.registers.at(static_cast<unsigned>(Register::A)));
 
-    // CPU cpu2(prog);
-    // cpu2.registers.at(static_cast<unsigned>(Register::A)) = 12;
-    // cpu2.run();
-    // fmt::print("2: {}\n", cpu1.registers.at(static_cast<unsigned>(Register::A)));
+    CPU cpu2(prog);
+    cpu2.registers.at(static_cast<unsigned>(Register::A)) = 12;
+    cpu2.run();
+    fmt::print("2: {}\n", cpu2.registers.at(static_cast<unsigned>(Register::A)));
 
     return 0;
 }
