@@ -17,6 +17,8 @@ pkg_check_modules(TBB REQUIRED QUIET tbb)
 #  find_package(Boost 1.67.0 COMPONENTS unit_test_framework REQUIRED)
 #  include_directories(src ${Boost_INCLUDE_DIR} ${TBB_DIR})
 
+find_package(range-v3 REQUIRED)
+
 add_executable(day1 src/day1.cc)
 target_compile_features(day1 PRIVATE cxx_std_20)
 target_link_libraries(day1 PRIVATE ${FMT_LIBRARIES})
@@ -71,7 +73,7 @@ target_link_libraries(day13 PRIVATE ${FMT_LIBRARIES})
 
 add_executable(day14 src/day14.cc)
 target_compile_features(day14 PRIVATE cxx_std_20)
-target_link_libraries(day14 PRIVATE ${FMT_LIBRARIES} ${CRYPTOPP_LIBRARIES} ${TBB_LIBRARIES})
+target_link_libraries(day14 PRIVATE ${FMT_LIBRARIES} ${CRYPTOPP_LIBRARIES} ${TBB_LIBRARIES} range-v3)
 
 add_executable(day15 src/day15.cc)
 target_compile_features(day15 PRIVATE cxx_std_20)
