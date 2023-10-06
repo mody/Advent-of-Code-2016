@@ -1,7 +1,6 @@
 #include "point2d.h"
 
 #include <boost/regex.hpp>
-#include <boost/regex/v5/regex_fwd.hpp>
 #include <cassert>
 #include <fmt/core.h>
 #include <iostream>
