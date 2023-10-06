@@ -222,7 +222,7 @@ int main()
 
     {
             CPU cpu1(prog);
-            for (unsigned x = 0; x < -1; ++x) {
+            for (unsigned x = 0; x < std::numeric_limits<unsigned>::max(); ++x) {
                 cpu1.registers = {0};
                 cpu1.registers.at(static_cast<unsigned>(Register::A)) = x;
                 cpu1.run();
