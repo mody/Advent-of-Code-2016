@@ -49,23 +49,19 @@ struct Instruction {
 
 using Program = std::vector<Instruction>;
 
+template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
 struct CPU
 {
     CPU(Program p) : program{std::move(p)} {}
 
     void run();
 
-    int64_t& get_value(Argument const& arg) {
-        return std::visit(
-            [this](auto&& _arg) -> int64_t& {
-                using T = std::decay_t<decltype(_arg)>;
-                if constexpr (std::is_same_v<T, int64_t>) {
-                    tmp1 = _arg;
-                    return tmp1;
-                } else if constexpr (std::is_same_v<T, Register>) {
-                    return registers.at(static_cast<unsigned>(_arg));
-                }
-            },
+    constexpr int64_t& get_value(Argument const& arg) noexcept {
+        return std::visit(overloaded {
+                [&](int64_t _arg) -> int64_t& { tmp1 = _arg; return tmp1; },
+                [&](Register _arg) -> int64_t& { return registers.at(static_cast<unsigned>(_arg)); }},
             arg);
     }
 
