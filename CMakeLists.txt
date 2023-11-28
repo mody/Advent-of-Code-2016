@@ -7,11 +7,11 @@ set(CMAKE_CXX_FLAGS "-Wall -Werror -Wshadow  -std=c++20 -fno-omit-frame-pointer 
 #  set(CMAKE_CXX_FLAGS "-Wall -Werror -Wshadow  -std=c++20 -fno-omit-frame-pointer -ggdb3 -O3 -fsanitize=memory -fsanitize-memory-track-origins")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(PkgConfig)
-pkg_check_modules(FMT REQUIRED fmt)
-pkg_check_modules(TBB REQUIRED tbb)
-# pkg_check_modules(PC_RapidJSON QUIET RapidJSON)
+find_package(Boost COMPONENTS regex REQUIRED)
+find_package(fmt REQUIRED)
+find_package(TBB REQUIRED)
 
+find_package(PkgConfig)
 pkg_check_modules(CRYPTOPP libcryptopp)
 if (NOT CRYPTOPP_FOUND)
     pkg_check_modules(CRYPTOPP libcrypto++)
@@ -20,11 +20,7 @@ if (NOT CRYPTOPP_FOUND)
     message(FATAL_ERROR "Crypto++ library not found")
 endif()
 
-# set(BOOST_ROOT "/home/ov699/opt/")
-find_package(Boost 1.74.0 COMPONENTS regex REQUIRED)
-include_directories(src ${Boost_INCLUDE_DIR})
-
-set (DEFAULT_LIBS ${FMT_LIBRARIES} ${Boost_REGEX_LIBRARY})
+set (DEFAULT_LIBS fmt boost_regex)
 
 add_executable(day1 src/day1.cc)
 target_compile_features(day1 PRIVATE cxx_std_20)
@@ -80,7 +76,7 @@ target_link_libraries(day13 PRIVATE ${DEFAULT_LIBS})
 
 add_executable(day14 src/day14.cc)
 target_compile_features(day14 PRIVATE cxx_std_20)
-target_link_libraries(day14 PRIVATE ${DEFAULT_LIBS} ${CRYPTOPP_LIBRARIES} ${TBB_LIBRARIES})
+target_link_libraries(day14 PRIVATE ${DEFAULT_LIBS} ${CRYPTOPP_LIBRARIES} tbb)
 
 add_executable(day15 src/day15.cc)
 target_compile_features(day15 PRIVATE cxx_std_20)
